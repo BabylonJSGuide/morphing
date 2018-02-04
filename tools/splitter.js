@@ -258,122 +258,92 @@ var splitMesh = function(mesh, plane) {  //plane passes through origin (0, 0, 0)
 						neg_indexMap[edgeMapOrigin + neg_index] = neg_index++;
 					}
 				}
-				k = (ia + 1) % 3;
-				ipointx = (positions[3 * vertex[k]] + positions[3 * vertex[(k + 1) % 3]]) / 2;
-				ipointy = (positions[3 * vertex[k] + 1] + positions[3 * vertex[(k + 1) % 3] + 1]) / 2;
-				ipointz = (positions[3 * vertex[k] + 2] + positions[3 * vertex[(k + 1) % 3] + 2]) / 2;
-									
-				iuvx = (uvs[2 * vertex[k]] + uvs[2 * vertex[(k + 1) % 3]]) / 2;
-				iuvy = (uvs[2 * vertex[k] + 1] + uvs[2 * vertex[(k + 1) % 3] + 1]) / 2;
-				a = Math.min(vertex[k], vertex[(k + 1) % 3]);
-				b = Math.max(vertex[k], vertex[(k + 1) % 3]);
-				edgeIndexes[k] = edgeMapping.indexOf(a+"|"+b);
-				if(edgeIndexes[k] < 0) {
-					edgeMapping.push(a+"|"+b, pos_index, neg_index);
-					edgeIndexes[k] = edgeMapping.indexOf(a+"|"+b);
-										
-					if(lengths[k] > 0) {					
-						pos_pdata.push(ipointx, ipointy, ipointz);
-						pos_uvdata.push(iuvx, iuvy);
-						pos_indexMap[edgeMapOrigin + pos_index] = pos_index++;
+				if(lengths[ia] > 0) {					
+					if(pos_indexMap[vertex[ia]] == undefined) {
+						pos_pdata.push(positions[3 * vertex[ia]], positions[3 * vertex[ia] + 1], positions[3 * vertex[ia] + 2]);
+						pos_uvdata.push(uvs[2 * vertex[ia]], uvs[2 * vertex[ia] + 1]);
+						pos_indexMap[vertex[ia]] = pos_index++;
 					}
-					else {					
-						neg_pdata.push(ipointx, ipointy, ipointz);
-						neg_uvdata.push(iuvx, iuvy);
-						neg_indexMap[edgeMapOrigin + neg_index] = neg_index++;
+					pos_idata.push(pos_indexMap[vertex[ia]]);						
+					
+					pos_idata.push(pos_indexMap[edgeMapOrigin + edgeMapping[edgeIndexes[ia] + 1]]);
+					
+					pos_idata.push(pos_indexMap[edgeMapOrigin + edgeMapping[edgeIndexes[(ia + 2) % 3] + 1]]);
+					
+					//
+					
+					if(neg_indexMap[vertex[(ia + 2) % 3]] == undefined) {
+						neg_pdata.push(positions[3 * vertex[(ia + 2) % 3]], positions[3 * vertex[(ia + 2) % 3] + 1], positions[3 * vertex[(ia + 2) % 3] + 2]);
+						neg_uvdata.push(uvs[2 * vertex[(ia + 2) % 3]], uvs[2 * vertex[(ia + 2) % 3] + 1]);
+						neg_indexMap[vertex[(ia + 2) % 3]] = neg_index++;
 					}
-				}					
-					if(lengths[ia] > 0) {					
-						if(pos_indexMap[vertex[ia]] == undefined) {
-							pos_pdata.push(positions[3 * vertex[ia]], positions[3 * vertex[ia] + 1], positions[3 * vertex[ia] + 2]);
-							pos_uvdata.push(uvs[2 * vertex[ia]], uvs[2 * vertex[ia] + 1]);
-							pos_indexMap[vertex[ia]] = pos_index++;
-						}
-						pos_idata.push(pos_indexMap[vertex[ia]]);						
-						
-						pos_idata.push(pos_indexMap[edgeMapOrigin + edgeMapping[edgeIndexes[ia] + 1]]);
-						
-						pos_idata.push(pos_indexMap[edgeMapOrigin + edgeMapping[edgeIndexes[(ia + 2) % 3] + 1]]);
-						
-						
-						
-						neg_idata.push(neg_indexMap[edgeMapOrigin + edgeMapping[edgeIndexes[ia] + 2]]);
-						
-						if(neg_indexMap[vertex[(ia + 1) % 3]] == undefined) {
-							neg_pdata.push(positions[3 * vertex[(ia + 1) % 3]], positions[3 * vertex[(ia + 1) % 3] + 1], positions[3 * vertex[(ia + 1) % 3] + 2]);
-							neg_uvdata.push(uvs[2 * vertex[(ia + 1) % 3]], uvs[2 * vertex[(ia + 1) % 3] + 1]);
-							neg_indexMap[vertex[ia]] = neg_index++;
-						}
-						neg_idata.push(neg_indexMap[vertex[(ia + 1) % 3]]);
-						
-						neg_idata.push(neg_indexMap[edgeMapOrigin + edgeMapping[edgeIndexes[(ia + 1) % 3] + 2]]);
-						
-						
-						
-						neg_idata.push(neg_indexMap[edgeMapOrigin + edgeMapping[edgeIndexes[ia] + 2]]);
-						
-						neg_idata.push(neg_indexMap[edgeMapOrigin + edgeMapping[edgeIndexes[(ia + 1) % 3] + 2]]);
-						
-						neg_idata.push(neg_indexMap[edgeMapOrigin + edgeMapping[edgeIndexes[(ia + 2) % 3] + 2]]);
-						
-						
-
-						neg_idata.push(neg_indexMap[edgeMapOrigin + edgeMapping[edgeIndexes[(ia + 2) % 3] + 2]]);
-						
-						neg_idata.push(neg_indexMap[edgeMapOrigin + edgeMapping[edgeIndexes[(ia + 1) % 3] + 2]]);
-						
-						if(neg_indexMap[vertex[(ia + 2) % 3]] == undefined) {
-							neg_pdata.push(positions[3 * vertex[(ia + 2) % 3]], positions[3 * vertex[(ia + 2) % 3] + 1], positions[3 * vertex[(ia + 2) % 3] + 2]);
-							neg_uvdata.push(uvs[2 * vertex[(ia + 2) % 3]], uvs[2 * vertex[(ia + 2) % 3] + 1]);
-							neg_indexMap[vertex[ia]] = neg_index++;
-						}
-						neg_idata.push(neg_indexMap[vertex[(ia + 2) % 3]]);
+					neg_idata.push(neg_indexMap[vertex[(ia + 2) % 3]]);
+					
+					neg_idata.push(neg_indexMap[edgeMapOrigin + edgeMapping[edgeIndexes[(ia + 2) % 3] + 2]]);
+					
+					neg_idata.push(neg_indexMap[edgeMapOrigin + edgeMapping[edgeIndexes[ia] + 2]]);
+					
+					//
+					
+					if(neg_indexMap[vertex[(ia + 2) % 3]] == undefined) {
+						neg_pdata.push(positions[3 * vertex[(ia + 2) % 3]], positions[3 * vertex[(ia + 2) % 3] + 1], positions[3 * vertex[(ia + 2) % 3] + 2]);
+						neg_uvdata.push(uvs[2 * vertex[(ia + 2) % 3]], uvs[2 * vertex[(ia + 2) % 3] + 1]);
+						neg_indexMap[vertex[(ia + 2) % 3]] = neg_index++;
 					}
-					else {					
-						if(neg_indexMap[vertex[ia]] == undefined) {
-							neg_pdata.push(positions[3 * vertex[ia]], positions[3 * vertex[ia] + 1], positions[3 * vertex[ia] + 2]);
-							neg_uvdata.push(uvs[2 * vertex[ia]], uvs[2 * vertex[ia] + 1]);
-							neg_indexMap[vertex[ia]] = neg_index++;
-						}
-						neg_idata.push(neg_indexMap[vertex[ia]]);
-						
-						neg_idata.push(neg_indexMap[edgeMapOrigin + edgeMapping[edgeIndexes[ia] + 2]]);
-						
-						neg_idata.push(neg_indexMap[edgeMapOrigin + edgeMapping[edgeIndexes[(ia + 2) % 3] + 2]]);
+					neg_idata.push(neg_indexMap[vertex[(ia + 2) % 3]]);
+					
+					neg_idata.push(neg_indexMap[edgeMapOrigin + edgeMapping[edgeIndexes[ia] + 2]]);
+					
+					if(neg_indexMap[vertex[(ia + 1) % 3]] == undefined) {
+						neg_pdata.push(positions[3 * vertex[(ia + 1) % 3]], positions[3 * vertex[(ia + 1) % 3] + 1], positions[3 * vertex[(ia + 1) % 3] + 2]);
+						neg_uvdata.push(uvs[2 * vertex[(ia + 1) % 3]], uvs[2 * vertex[(ia + 1) % 3] + 1]);
+						neg_indexMap[vertex[(ia + 1) % 3]] = neg_index++;
+					}
+					neg_idata.push(neg_indexMap[vertex[(ia + 1) % 3]]);
+				}
+				else {					
+					if(neg_indexMap[vertex[ia]] == undefined) {
+						neg_pdata.push(positions[3 * vertex[ia]], positions[3 * vertex[ia] + 1], positions[3 * vertex[ia] + 2]);
+						neg_uvdata.push(uvs[2 * vertex[ia]], uvs[2 * vertex[ia] + 1]);
+						neg_indexMap[vertex[ia]] = neg_index++;
+					}
+					neg_idata.push(neg_indexMap[vertex[ia]]);
+					
+					neg_idata.push(neg_indexMap[edgeMapOrigin + edgeMapping[edgeIndexes[ia] + 2]]);
+					
+					neg_idata.push(neg_indexMap[edgeMapOrigin + edgeMapping[edgeIndexes[(ia + 2) % 3] + 2]]);
+					
+					//
+					
+					if(pos_indexMap[vertex[(ia + 2) % 3]] == undefined) {
+						pos_pdata.push(positions[3 * vertex[(ia + 2) % 3]], positions[3 * vertex[(ia + 2) % 3] + 1], positions[3 * vertex[(ia + 2) % 3] + 2]);
+						pos_uvdata.push(uvs[2 * vertex[(ia + 2) % 3]], uvs[2 * vertex[(ia + 2) % 3] + 1]);
+						pos_indexMap[vertex[(ia + 2) % 3]] = pos_index++;
+					}
+					pos_idata.push(pos_indexMap[vertex[(ia + 2) % 3]]);
+					
+					pos_idata.push(pos_indexMap[edgeMapOrigin + edgeMapping[edgeIndexes[(ia + 2) % 3] + 1]]);
+					
+					pos_idata.push(pos_indexMap[edgeMapOrigin + edgeMapping[edgeIndexes[ia] + 1]]);
+					
+					//
+					if(pos_indexMap[vertex[(ia + 2) % 3]] == undefined) {
+						pos_pdata.push(positions[3 * vertex[(ia + 2) % 3]], positions[3 * vertex[(ia + 2) % 3] + 1], positions[3 * vertex[(ia + 2) % 3] + 2]);
+						pos_uvdata.push(uvs[2 * vertex[(ia + 2) % 3]], uvs[2 * vertex[(ia + 2) % 3] + 1]);
+						pos_indexMap[vertex[(ia + 2) % 3]] = pos_index++;
+					}
+					pos_idata.push(pos_indexMap[vertex[(ia + 2) % 3]]);
+					
+					pos_idata.push(pos_indexMap[edgeMapOrigin + edgeMapping[edgeIndexes[ia] + 1]]);
+					
+					if(pos_indexMap[vertex[(ia + 1) % 3]] == undefined) {
+						pos_pdata.push(positions[3 * vertex[(ia + 1) % 3]], positions[3 * vertex[(ia + 1) % 3] + 1], positions[3 * vertex[(ia + 1) % 3] + 2]);
+						pos_uvdata.push(uvs[2 * vertex[(ia + 1) % 3]], uvs[2 * vertex[(ia + 1) % 3] + 1]);
+						pos_indexMap[vertex[(ia + 1) % 3]] = pos_index++;
+					}
+					pos_idata.push(pos_indexMap[vertex[(ia + 1) % 3]]);
 
-						
-						pos_idata.push(pos_indexMap[edgeMapOrigin + edgeMapping[edgeIndexes[ia] + 1]]);
-						
-						if(pos_indexMap[vertex[(ia + 1) % 3]] == undefined) {
-							pos_pdata.push(positions[3 * vertex[(ia + 1) % 3]], positions[3 * vertex[(ia + 1) % 3] + 1], positions[3 * vertex[(ia + 1) % 3] + 2]);
-							pos_uvdata.push(uvs[2 * vertex[(ia + 1) % 3]], uvs[2 * vertex[(ia + 1) % 3] + 1]);
-							pos_indexMap[vertex[(ia + 1) % 3]] = pos_index++;
-						}
-						pos_idata.push(pos_indexMap[vertex[(ia + 1) % 3]]);
-						
-						pos_idata.push(pos_indexMap[edgeMapOrigin + edgeMapping[edgeIndexes[(ia + 1) % 3] + 1]]);
-						
-						
-
-						pos_idata.push(pos_indexMap[edgeMapOrigin + edgeMapping[edgeIndexes[ia] + 1]]);
-						
-						pos_idata.push(pos_indexMap[edgeMapOrigin + edgeMapping[edgeIndexes[(ia + 1) % 3] + 1]]);
-						
-						pos_idata.push(pos_indexMap[edgeMapOrigin + edgeMapping[edgeIndexes[(ia + 2) % 3] + 1]]);
-						
-						
-
-						pos_idata.push(pos_indexMap[edgeMapOrigin + edgeMapping[edgeIndexes[(ia + 2) % 3] + 1]]);
-						
-						pos_idata.push(pos_indexMap[edgeMapOrigin + edgeMapping[edgeIndexes[(ia + 1) % 3] + 1]]);
-						
-						if(pos_indexMap[vertex[(ia + 2) % 3]] == undefined) {
-							pos_pdata.push(positions[3 * vertex[(ia + 2) % 3]], positions[3 * vertex[(ia + 2) % 3] + 1], positions[3 * vertex[(ia + 2) % 3] + 2]);
-							pos_uvdata.push(uvs[2 * vertex[(ia + 2) % 3]], uvs[2 * vertex[(ia + 2) % 3] + 1]);
-							pos_indexMap[vertex[ia]] = pos_index++;
-						}
-						pos_idata.push(pos_indexMap[vertex[(ia + 2) % 3]]);
-					}  
+				}  
 					assigned = true;				
 			} 
 			ia++			

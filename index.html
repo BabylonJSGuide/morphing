@@ -56,8 +56,9 @@ plane.material.alpha = 0.2;
 
 var plane = new BABYLON.Plane(0, 0, 1, 0);
 
-var cylinder = BABYLON.MeshBuilder.CreateSphere("cone", {diameter: 4}, scene);
-cylinder.minimizeVertices();
+/*
+var sphere = BABYLON.MeshBuilder.CreateSphere("cone", {diameter: 4}, scene);
+sphere.minimizeVertices();
 
 var split = splitMesh(cylinder, plane);
 split.positive_section.position.z = 1;
@@ -65,6 +66,23 @@ split.positive_section.position.y = 4;
 
 split.negative_section.position.z = -1;
 split.negative_section.position.y = 4;
+*/
+var cylinder = BABYLON.MeshBuilder.CreateCylinder("cone", {diameter: 4, tessellation: 7}, scene);
+cylinder.minimizeVertices();
+
+cylinder.material = new BABYLON.StandardMaterial("", scene);
+cylinder.material.wireframe = true;
+
+var split = splitMesh(cylinder, plane);
+split.positive_section.position.z = 1;
+split.positive_section.position.y = 4;
+split.positive_section.material = new BABYLON.StandardMaterial("", scene);
+split.positive_section.material.wireframe = true;
+
+split.negative_section.position.z = -1;
+split.negative_section.position.y = 4;
+split.negative_section.material = new BABYLON.StandardMaterial("", scene);
+split.negative_section.material.wireframe = true;
 
 
 return scene;
